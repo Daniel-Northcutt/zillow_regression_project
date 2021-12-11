@@ -106,8 +106,8 @@ def remove_outliers(df, k, col_list):
 
 def prepare(df):
     '''
-    Takes a zillow df as an argument and returns a df with handled nulls, removed nulls, changed column types,
-    drop duplicates, and remove outliers. Drops taxamount to avoid data leak.
+    Takes a zillow df as an argument and returns a df removed nulls, changed column names & types,
+    drop duplicates, and remove outliers.
     '''
     #Rename columns
     df = df.rename(columns = {'bedroomcnt':'bedrooms', 
@@ -150,13 +150,13 @@ def split_data(df):
 def scale_zillow(train, validate, test):
     '''
     Takes train, validate, test datasets as an argument and returns the dataframes with 
-    tax_vale, and area scaled columns.
+    tax_value, and area scaled columns.
     '''
     ## MinMaxScaler
     scaler = sklearn.preprocessing.MinMaxScaler()
 
     # Fit scaler to data
-    scaler.fit(train[['tax_vale', 'area']])
+    scaler.fit(train[['tax_value', 'area']])
 
     # Execute scaling
     train[['area', 'tax_value_scaled']] = scaler.transform(train[['area', 'tax_value']])
