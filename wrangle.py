@@ -159,7 +159,7 @@ def scale_zillow(train, validate, test):
     scaler.fit(train[['tax_value', 'area']])
 
     # Execute scaling
-    train[['area', 'tax_value_scaled']] = scaler.transform(train[['area', 'tax_value']])
+    train[['area_scaled', 'tax_value_scaled']] = scaler.transform(train[['area', 'tax_value']])
     validate[['area_scaled', 'tax_value_scaled']] = scaler.transform(validate[['area', 'tax_value']])
     test[['area_scaled', 'tax_value_scaled']] = scaler.transform(test[['area', 'tax_value']])
     return train, validate, test
