@@ -1,27 +1,90 @@
-# zillow_regression_project
-ReadMe worth = 11 points
+# Predicting Property Valuation in Southern California
+### By Daniel Northcutt
+
+<hr style="border:1px solid black"> </hr>
+
+This presentation and notebooks of code should provide strong understanding of the tax value prediction model created.  Following the database pipeline I offer a deep understanding of the Zillow database through exploration and modeling.  All steps can easily be reproduced by following the steps below. This presentation is aimed at helping Zillow understand their data to a deeper level and offer insights in ways to strengthen predictive modeling.
+
+<hr style="border:1px solid black"> </hr>
 
 
-/2
 
-Your readme should include a project plan which helps guide both the user and yourself through the different stages of the pipeline and steps you took to get to your conclusion.
+## Exectuive Summary:
+    I created a regression model that beat the baseline model in predicting the 
+    tax value of homes in Southern California. The drivers for this model and presentation
+    are bedroom count, bathroom count, and square feet while also representing other 
+    features in exploration.
+
+## Project Goals:
+    - Acquire, prepare, remove outliers, split, and scale the data for actionable means
+    - Explore the dataset to create 4 questions to evaluate
+    - Provide visual representations, statistical tests, and modeling to aid in 
+    understanding the data
+    - Use regression modeling to run on our train dataset using multiple features to find 
+    the strongest model for predicting tax values
+    - Refine and prepare a strong presentation that provides insight clearly and precise
+
+## Background Information:
+    - Zillow 2017 Codeup database
+    - Single unit properties representing 52,442 homes
+    - Counties: Los Angeles, Orange, Ventura
+    
+<hr style="border:1px solid black"> </hr>
+
+## Questions Asked:
+    - Does county location affect tax values?
+    - Does the number of bedrooms and/or bathrooms affect tax values?
+    - Does the square foot of a home affect the tax value?
+    - Is there a relationship between home age and tax value?
+
+<hr style="border:1px solid black"> </hr>
+
+## Skills Used:
+    - Python:
+        - Pandas
+        - Matplotlib
+        - Seaborn
+        - Numpy
+        - Sklearn
+    - SQL
+    - Statistical Analysis:
+        - Descriptive Stats
+        - Hypothesis Testing
+        - Pearsons r
+    - Regression Modeling:
+        - Linear Regression Evaluation
+        - Tweedie Regressor
+        - LassoLars
+
+<hr style="border:1px solid black"> </hr>
 
 
-/2
 
-Your readme should include a data dictionary, which is important to provide in order to define and disambiguate each of the variables you are analyzing.
+## Project Reproduction:
+    - Create and use your own env file that connects to the sql database
+    - Clone this repo to run on your own make sure to have wrangle.py, explore.py, and 
+    evaluate.py with the final report
+    - All code is commented in the .py functions along with in the final presentation
+    - Use the workbook to explore the prepared data on your own
+    
+<hr style="border:1px solid black"> </hr>
 
-
-/2
-
-Your readme should include useful and adequate instructions for reproducing your analysis and final report.
-
-
-/3
-
-Your readme should include a clear project goal that reflect on what you are trying to achieve for the business/organization (in the scenario layed out). Your goal is never just to create an algorithm or model or to purely make discoveries in exploration...it includes the why. "My goal is to..., so that..." Your goal should be specific enough to know when you have reached it and concise enough to keep in 1-2 sentences. "My goal is to identify key drivers of churn, which customers at risk of churn, and make recommendations for changes so that we can reduce the monthly churn rate and increase customer retention." This helps tell you when you have reached a minimally viable product (including a presentation and predictions, in this example scenario).
+This project was driven by the desire to dig deep into a dataset to see what can be discoverable.  Through exploration strong understanding of data can be represented and presented.  This project was driven to find what is underneath the hood of a dataset.
 
 
-/2
 
-Your readme should include initial questions and focus you are going into the analysis with. This is an important part of project planning and gives context to the reader about where you started, what were your initial ideas and thoughts, and did those play out to be true.
+
+
+# Data Dictionary
+| Feature                    | Datatype               | Description                                                           |
+|:---------------------------|:-----------------------|:----------------------------------------------------------------------|
+| bedroom_count              | 7043 non-null: float   | Bedroom count for homes                 |
+| bathroom_count             | 7043 non-null: float   | Bathroom count for homes                    |
+| square_feet                | 7043 non-null: float   | Square feet for homes        |
+| tax_value                  | 7043 non-null: float   | Tax valuation for homes |
+| year_built                 | 7043 non-null: float   | Year the home was built                |
+| county                     | 7043 non-null: object  | Represents what county the home resides in        |
+| age                        | 7043 non-null: object  | Represents the age of the home                     |
+| county_tax_avg             | 7043 non-null: float   | Represents the average tax valuation of  a county                       |
+
+
