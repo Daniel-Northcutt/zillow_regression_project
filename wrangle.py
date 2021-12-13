@@ -82,7 +82,6 @@ def get_zillow_data():
 #### Prepare ###
 #******************* Remove Outliers ***********************
 
-
 def remove_outliers(df, k, col_list):
     ''' remove outliers from a list of columns in a dataframe 
         and return that dataframe
@@ -104,33 +103,61 @@ def remove_outliers(df, k, col_list):
     return df
 
 
+####
 def prepare(df):
     '''
     Takes a zillow df as an argument and returns a df removed nulls, changed column names & types,
     drop duplicates, and remove outliers.
     '''
     #Rename columns
-    df = df.rename(columns = {'bedroomcnt':'bedrooms', 
-                            'bathroomcnt':'bathrooms', 
-                            'calculatedfinishedsquarefeet':'area',
+    df = df.rename(columns = {'bedroomcnt':'bedroom_count', 
+                            'bathroomcnt':'bathroom_count', 
+                            'calculatedfinishedsquarefeet':'square_feet',
                             'taxvaluedollarcnt':'tax_value', 
                             'yearbuilt':'year_built',
-                            'transactiondate': 'transaction_date'})
-    # col_list for outliers
-    col_list = ['bedrooms', 'bathrooms', 'area', 
-            'tax_value', 'year_built', 'fips']
-    # run df through remove_outliers function for all columns
+                            'transactiondate': 'transaction_date',
+                            'fips': 'county'})
+    # Rename fips numbers to the county associated
+    df['county'] = df['county'].replace({6037.0:'LA',6059.0: 'Orange',6111.0:'Ventura'})
+
+    col_list = ['bedroom_count', 'bathroom_count', 'square_feet','tax_value', 'year_built']
     df = remove_outliers(df, 1.5, col_list)
-    
+
     # drop duplicates
     df.drop_duplicates()
 
-    # for loop to change dtypes of appropriate columns to int
-    for col in df.columns[df.columns != 'transaction_date']:
-        df[col] = df[col].astype(int)
+    #Age column
+    from datetime import date
+    df['age'] = date.today().year-df['year_built']
+
+    dummy_df = pd.get_dummies(df[['county']], drop_first = True)
+    df = pd.concat([df, dummy_df], axis = 1)
+
 
     return df
+#******************* COUNTY AVGS ***********************
 
+# Note did not use in presentation - great feature to explore further
+def county_avg(df):
+    ''' This function creates a county avg price'''
+    LA = df[df.county=='LA']
+    orange = df[df.county=='Orange']
+    ventura = df[df.county=='Ventura']
+
+    la_avg = round(LA.tax_value.mean(),2)
+    orange_avg = round(orange.tax_value.mean(),2)
+    ventura_avg = round(ventura.tax_value.mean(),2)
+
+    def assign_county_avg(row):
+        if row['county']=='LA':
+            return la_avg
+        if row['county']=='Orange':
+            return orange_avg
+        if row['county']=='Ventura':
+            return ventura_avg
+    df['county_tax_avg'] = df.apply(lambda row: assign_county_avg(row), axis = 1)
+
+    return df
 
 
 #******************* SPLIT DATA ***********************
@@ -144,24 +171,35 @@ def split_data(df):
     train, validate = train_test_split(train, test_size = .3, random_state = 222)
     return train, validate, test
 
+#******************* Baseline ***********************
+def add_baseline(train, validate, test):
+    ''' Baseline by mean for train, validate, and test'''
+    baseline = train.tax_value.mean()
+    train['baseline'] = baseline
+    validate['baseline'] = baseline
+    test['baseline'] = baseline
+    return train, validate, test
+
+
+
 #******************* SCALE DATA ***********************
 
 
 def scale_zillow(train, validate, test):
     '''
     Takes train, validate, test datasets as an argument and returns the dataframes with 
-    tax_value, and area scaled columns.
+    tax_value, and square_feet scaled columns.
     '''
     ## MinMaxScaler
     scaler = sklearn.preprocessing.MinMaxScaler()
 
     # Fit scaler to data
-    scaler.fit(train[['tax_value', 'area']])
+    scaler.fit(train[['tax_value', 'square_feet', 'bedroom_count', 'bathroom_count']])
 
     # Execute scaling
-    train[['area_scaled', 'tax_value_scaled']] = scaler.transform(train[['area', 'tax_value']])
-    validate[['area_scaled', 'tax_value_scaled']] = scaler.transform(validate[['area', 'tax_value']])
-    test[['area_scaled', 'tax_value_scaled']] = scaler.transform(test[['area', 'tax_value']])
+    train[['square_feet_scaled', 'tax_value_scaled', 'bedroom_count_scaled', 'bathroom_count_scaled']] = scaler.transform(train[['square_feet', 'tax_value', 'bedroom_count', 'bathroom_count']])
+    validate[['square_feet_scaled', 'tax_value_scaled', 'bedroom_count_scaled', 'bathroom_count_scaled']] = scaler.transform(validate[['square_feet', 'tax_value', 'bedroom_count', 'bathroom_count']])
+    test[['square_feet_scaled', 'tax_value_scaled', 'bedroom_count_scaled', 'bathroom_count_scaled']] = scaler.transform(test[['square_feet', 'tax_value', 'bedroom_count', 'bathroom_count']])
     return train, validate, test
 
 
@@ -173,11 +211,24 @@ def wrangle_zillow():
     #Acquire
     df = get_zillow_data()
     
+   #Prepare
+    #df = prepare(df)
+
+    #Remove Outliers
+
+    #df = remove_outliers(df, 1.5, ['bedroom_count', 'bathroom_count', 'square_feet','tax_value'])
+
     #Prepare
     df = prepare(df)
     
+    #County Avg
+    df = county_avg(df)
+
     #Splits
     train, validate, test = split_data(df)
+
+    #Baseline
+    train, validate, test = add_baseline(train, validate, test)
 
     #Scale it out
     train, validate, test, = scale_zillow(train, validate, test)
