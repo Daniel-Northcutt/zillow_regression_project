@@ -56,7 +56,7 @@ def county_tax_value():
     #prepare data from wrangle
     df = wrangle.prepare(df)
     plt.figure(figsize=(12, 6))
-    sns.histplots(data = df, x='tax_value', hue='county', palette = 'twilight_shifted')
+    sns.histplot(data = df, x='tax_value', hue='county', palette = 'twilight_shifted')
     plt.title('County Distribution by Tax Valuation')
 
 ###### Heatmap Correlation ####
